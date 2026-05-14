@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // URL base da API NestJS — troque pela URL do seu backend em produção
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const ModalLead = ({ pendingResult, onSuccess, onSkip }) => {
   const [nome, setNome]       = useState("");

@@ -1,73 +1,46 @@
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import { SupabaseService } from '../supabase/supabase.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateLeadDto } from './dto/create-lead.dto';
-
-// O LeadsService contém toda a lógica de negócio.
-// O Controller apenas recebe a requisição e delega para cá.
+import { USER_REPOSITORY, IUserRepository } from '../common/interfaces/user-repository.interface';
+import { FINANCIAL_PROFILE_REPOSITORY, IFinancialProfileRepository } from '../common/interfaces/financial-profile-repository.interface';
+import { GOALS_REPOSITORY, IGoalsRepository } from '../common/interfaces/goals-repository.interface';
 
 @Injectable()
 export class LeadsService {
-  constructor(private readonly supabase: SupabaseService) {}
+  constructor(
+    @Inject(USER_REPOSITORY) private readonly userRepo: IUserRepository,
+    @Inject(FINANCIAL_PROFILE_REPOSITORY) private readonly profileRepo: IFinancialProfileRepository,
+    @Inject(GOALS_REPOSITORY) private readonly goalsRepo: IGoalsRepository,
+  ) {}
 
   async create(dto: CreateLeadDto) {
-    const db = this.supabase.getClient();
-
-    // 1. Salva o usuário
     const username =
       dto.nome.trim().toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
 
-    const { data: users, error: userError } = await db
-      .from('users')
-      .insert({
-        username,
-        email:           dto.email.trim().toLowerCase(),
-        password_hash:   'pending',
-        role_id:         2,
-        open_to_propose: dto.openToPropose,
-      })
-      .select();
+    const { id: userId } = await this.userRepo.create({
+      username,
+      email:         dto.email.trim().toLowerCase(),
+      passwordHash:  'pending',
+      roleId:        2,
+      openToPropose: dto.openToPropose,
+    });
 
-    if (userError) {
-      // E-mail duplicado é um erro esperado — retorna 400
-      if (userError.code === '23505') {
-        throw new BadRequestException('Este e-mail já está cadastrado.');
-      }
-      throw new InternalServerErrorException(userError.message);
-    }
+    await this.profileRepo.create({
+      userId,
+      presentAmount:     dto.presentAmount,
+      monthlyInvestment: dto.monthlyInvestment,
+      monthlyRate:       dto.monthlyRate,
+    });
 
-    const userId = users[0].id;
-
-    // 2. Salva o perfil financeiro
-    const { error: profileError } = await db
-      .from('user_financial_profile')
-      .insert({
-        user_id:            userId,
-        present_amount:     dto.presentAmount,
-        monthly_investment: dto.monthlyInvestment,
-        monthly_rate:       dto.monthlyRate,
-      });
-
-    if (profileError) {
-      throw new InternalServerErrorException(profileError.message);
-    }
-
-    // 3. Salva os objetivos
-    if (dto.goals && dto.goals.length > 0) {
-      const goalsPayload = dto.goals.map((g) => ({
-        user_id:       userId,
-        type:          g.type,
-        label:         g.label,
-        target_value:  g.targetValue,
-        target_months: g.targetMonths ?? null,
-      }));
-
-      const { error: goalsError } = await db
-        .from('user_goals')
-        .insert(goalsPayload);
-
-      if (goalsError) {
-        throw new InternalServerErrorException(goalsError.message);
-      }
+    if (dto.goals?.length > 0) {
+      await this.goalsRepo.createMany(
+        dto.goals.map((g) => ({
+          userId,
+          type:         g.type,
+          label:        g.label,
+          targetValue:  g.targetValue,
+          targetMonths: g.targetMonths ?? null,
+        })),
+      );
     }
 
     return { success: true, userId };

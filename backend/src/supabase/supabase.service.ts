@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-// O SupabaseService é injetável em qualquer outro service do NestJS.
-// A chave do Supabase fica SOMENTE aqui no backend — nunca exposta ao frontend.
+import { IDatabaseProvider } from '../common/interfaces/database.interface';
 
 @Injectable()
-export class SupabaseService {
+export class SupabaseService implements IDatabaseProvider {
   private client: SupabaseClient;
 
   constructor() {
@@ -15,7 +13,6 @@ export class SupabaseService {
     );
   }
 
-  // Retorna o client para uso direto nos services
   getClient(): SupabaseClient {
     return this.client;
   }

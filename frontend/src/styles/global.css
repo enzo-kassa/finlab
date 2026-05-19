@@ -391,12 +391,8 @@ details[open] summary { margin-bottom: 16px; }
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   animation: shake 0.3s ease;
-  @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
 }
-}
+
 
 .calc-btn {
   width: 100%;
@@ -456,6 +452,11 @@ details[open] summary { margin-bottom: 16px; }
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+ @keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 @keyframes fadeIn {

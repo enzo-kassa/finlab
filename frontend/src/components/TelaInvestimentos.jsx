@@ -87,9 +87,8 @@ const TelaInvestimentos = () => {
       <div className="card blue-accent">
         <div className="card-title">01 — posição atual</div>
         <div className="field-grid">
-          <Field label="Saldo atual (R$)"  value={saldoAtual}   onChange={setSaldoAtual}   placeholder="0.00" min="0" step="0.01" />
-          <Field label="Aporte mensal (R$)" value={aporteMensal} onChange={setAporteMensal} placeholder="0.00" min="0" step="0.01" />
-        </div>
+<Field label="Saldo atual (R$)" tooltip="Quanto você já tem investido hoje" hint="Ex: poupança, CDB, Tesouro Direto" value={saldoAtual} onChange={setSaldoAtual} placeholder="ex: 10000.00" min="0" step="0.01" />          
+<Field label="Aporte mensal (R$)" tooltip="Valor que você pretende investir todo mês" hint="Seja consistente para resultados precisos" value={aporteMensal} onChange={setAporteMensal} placeholder="ex: 500.00" min="0" step="0.01" />        </div>
         <div className="field" style={{ marginBottom: 12 }}>
           <label>Taxa de rendimento mensal</label>
           <div className="rate-presets">

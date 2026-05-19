@@ -96,12 +96,11 @@ const TelaComparativo = () => {
       <div className="card">
         <div className="card-title">01 — dados da compra</div>
         <div className="field-grid">
-          <Field label="Preço à Vista (R$)" value={precoVista}   onChange={setPrecoVista}   placeholder="0.00"    min="0"  step="0.01" />
-          <Field label="Nº de Parcelas"     value={parcelas}     onChange={setParcelas}     placeholder="1 – 360" min="1" max="360" step="1" />
+<Field label="Preço à Vista (R$)" tooltip="Valor total pago à vista, via Pix ou débito" value={precoVista} onChange={setPrecoVista} placeholder="ex: 1200.00" min="0" step="0.01" />
+<Field label="Nº de Parcelas" tooltip="Suporta de 1 a 360 parcelas (até 30 anos)" value={parcelas} onChange={setParcelas} placeholder="ex: 12" min="1" max="360" step="1" />
         </div>
         <div className="field-full">
-          <Field label="Valor de cada Parcela (R$)" value={valorParcela} onChange={setValorParcela} placeholder="0.00" min="0" step="0.01" />
-        </div>
+<Field label="Valor de cada Parcela (R$)" tooltip="Valor de uma única parcela do parcelamento" value={valorParcela} onChange={setValorParcela} placeholder="ex: 110.00" min="0" step="0.01" />        </div>
       </div>
 
       {/* Estratégia de capital */}

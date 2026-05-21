@@ -11,7 +11,7 @@ export default function App() {
       <div className="grid-bg" />
 
       <nav className="nav">
-        <div className="nav-brand">FINLAB</div>
+        <div className="nav-brand">Fin<span>Lab</span></div>
         <div className="nav-tabs">
           <button
             className={`nav-tab${tela === "comparativo" ? " active" : ""}`}
